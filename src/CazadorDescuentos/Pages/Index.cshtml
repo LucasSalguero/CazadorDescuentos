@@ -1,0 +1,36 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Ofertas";
+}
+
+<h1>Ofertas</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-sm">
+        <input asp-for="Marca" class="form-control" placeholder="Marca" />
+    </div>
+    <div class="col-sm">
+        <select asp-for="Categoria" asp-items="@(new SelectList(Model.Categorias))" class="form-select">
+            <option value="">Todas las categorías</option>
+        </select>
+    </div>
+    <div class="col-sm-auto">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
+</form>
+
+@foreach (var item in Model.Ofertas)
+{
+    <article class="card mb-2">
+        <div class="card-body">
+            @if (item.Etiqueta is not null)
+            {
+                <span class="badge bg-success">@item.Etiqueta</span>
+            }
+            <h2 class="h5">@item.Oferta.Marca - @item.Oferta.Producto</h2>
+            <p class="mb-1">$@item.Oferta.PrecioPromocional (antes $@item.Oferta.PrecioOriginal, -@item.Oferta.PorcentajeDescuento%)</p>
+            <a asp-page="/Ofertas/Detalle" asp-route-id="@item.Oferta.Id">Ver oferta</a>
+        </div>
+    </article>
+}

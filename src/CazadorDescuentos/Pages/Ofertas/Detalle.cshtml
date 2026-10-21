@@ -1,0 +1,32 @@
+@page "{id:int}"
+@model CazadorDescuentos.Pages.Ofertas.DetalleModel
+@{
+    ViewData["Title"] = Model.Oferta.Producto;
+}
+
+<h1>@Model.Oferta.Marca - @Model.Oferta.Producto</h1>
+
+<p>
+    $@Model.Oferta.PrecioPromocional (antes $@Model.Oferta.PrecioOriginal, -@Model.Oferta.PorcentajeDescuento%)
+    <span class="badge bg-secondary">Semáforo: @Model.Semaforo</span>
+</p>
+
+@if (Model.Oferta.Restricciones is not null)
+{
+    <p class="text-muted">@Model.Oferta.Restricciones</p>
+}
+
+<div id="canje"
+     data-oferta-id="@Model.Oferta.Id"
+     data-codigo="@Model.Oferta.Codigo"
+     data-enlace="@Model.Oferta.EnlaceComercio">
+    @if (Model.Oferta.Codigo is not null)
+    {
+        <button type="button" class="btn btn-outline-primary" data-accion="copiar">Copiar código: @Model.Oferta.Codigo</button>
+    }
+    <button type="button" class="btn btn-primary" data-accion="canjear">Ir al comercio</button>
+</div>
+
+@section Scripts {
+    <script src="~/js/canje.js" asp-append-version="true"></script>
+}
