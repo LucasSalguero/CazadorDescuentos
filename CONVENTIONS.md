@@ -57,7 +57,7 @@ La clave del LLM y la API key de carga manual nunca se suben al repositorio:
 ### 5. Pull requests
 
 - Una rama corta por issue.
-- Todo entra a `main` por PR, con al menos una revisión de otro integrante.
+- Todo entra a `main` por PR. Antes de mergear, revisar el diff completo en GitHub.
 - La descripción incluye `Closes #N`.
 - Se usa squash merge; el título del PR queda como mensaje del commit.
 - No se edita una migración que ya está en `main`; se crea una nueva.

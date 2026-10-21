@@ -32,7 +32,7 @@ CazadorDescuentos propone:
 
 ### Fuera de alcance
 
-Registro de usuarios, pagos y carrito propio, notificaciones push, geolocalización y mapas, recomendaciones con machine learning, gestión de delivery y panel de administración gráfico. El detalle de cada exclusión está en la propuesta de MVP del equipo.
+Registro de usuarios, pagos y carrito propio, notificaciones push, geolocalización y mapas, recomendaciones con machine learning, gestión de delivery y panel de administración gráfico.
 
 ## Stack
 
@@ -124,10 +124,14 @@ En `src/CazadorDescuentos/appsettings.json`:
 - `Ingesta:Marcas`: nombre y URL de promociones de cada marca.
 - `Semaforo`: cantidad mínima de votos y porcentajes que definen los colores verde y rojo.
 
-## Cómo contribuir
+## Flujo de trabajo
 
 1. Tomar un issue del [tablero de issues](https://github.com/LucasSalguero/CazadorDescuentos/issues). Cada uno es una historia de usuario con sus criterios de aceptación.
 2. Crear una rama desde `main` para ese issue.
-3. Abrir un pull request con `Closes #N` en la descripción y pedir revisión a otro integrante.
+3. Abrir un pull request con `Closes #N` en la descripción, revisarlo y mergearlo.
 
 Las reglas de nombres, límites entre módulos, pruebas y definición de terminado están en [CONVENTIONS.md](CONVENTIONS.md).
+
+## Autor
+
+Lucas Salguero ([@LucasSalguero](https://github.com/LucasSalguero))
