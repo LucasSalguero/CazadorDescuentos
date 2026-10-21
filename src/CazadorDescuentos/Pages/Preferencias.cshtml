@@ -1,0 +1,20 @@
+@page
+@model PreferenciasModel
+@{
+    ViewData["Title"] = "Preferencias";
+}
+
+<h1>Preferencias</h1>
+<p>Elegí hasta 3 categorías para ver primero sus ofertas.</p>
+
+<form method="post">
+    @foreach (var categoria in Model.Categorias)
+    {
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="Seleccionadas" value="@categoria" id="cat-@categoria"
+                   checked="@Model.Seleccionadas.Contains(categoria)" />
+            <label class="form-check-label" for="cat-@categoria">@categoria</label>
+        </div>
+    }
+    <button type="submit" class="btn btn-primary mt-2">Guardar</button>
+</form>
