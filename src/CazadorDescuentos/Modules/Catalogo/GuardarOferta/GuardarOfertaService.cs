@@ -28,7 +28,7 @@ internal sealed class GuardarOfertaService
 
         entidad.Marca = marca;
         entidad.Producto = oferta.Producto.Trim();
-        entidad.Categoria = oferta.Categoria.Trim();
+        entidad.Categoria = Categorias.Normalizar(oferta.Categoria) ?? oferta.Categoria.Trim();
         entidad.Codigo = VacioANulo(oferta.Codigo);
         entidad.Restricciones = VacioANulo(oferta.Restricciones);
         entidad.EnlaceComercio = oferta.EnlaceComercio.Trim();

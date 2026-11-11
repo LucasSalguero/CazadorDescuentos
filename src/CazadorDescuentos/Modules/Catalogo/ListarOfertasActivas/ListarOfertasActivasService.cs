@@ -31,7 +31,7 @@ internal sealed class ListarOfertasActivasService
 
         if (!string.IsNullOrWhiteSpace(filtros.Categoria))
         {
-            var categoria = filtros.Categoria.Trim();
+            var categoria = Categorias.Normalizar(filtros.Categoria) ?? filtros.Categoria.Trim();
             consulta = consulta.Where(o => o.Categoria == categoria);
         }
 
