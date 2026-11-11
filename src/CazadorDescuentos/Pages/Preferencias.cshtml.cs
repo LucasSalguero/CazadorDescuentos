@@ -9,6 +9,8 @@ public class PreferenciasModel(ICatalogo catalogo, IPersonalizacion personalizac
 {
     public IReadOnlyList<string> Categorias => catalogo.Categorias;
 
+    public int Maximo => 3;
+
     [BindProperty]
     public List<string> Seleccionadas { get; set; } = [];
 

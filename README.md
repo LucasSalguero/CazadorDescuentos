@@ -10,7 +10,7 @@ Las promociones de comida rápida están dispersas entre los sitios de cada marc
 
 CazadorDescuentos propone:
 
-- **Centralizar** las ofertas de hasta 3 marcas en un feed único.
+- **Centralizar** las ofertas de Mostaza, McDonald's y Burger King en un feed único.
 - **Personalizar** el orden según las categorías de comida que elige el usuario.
 - **Verificar** cada oferta con los votos de quienes la usaron.
 
@@ -65,4 +65,29 @@ src/CazadorDescuentos/
 ├── Pages/           Feed, preferencias y ficha de oferta
 └── wwwroot/js/      Canje y feedback del lado del cliente
 tests/CazadorDescuentos.Tests/
+```
+
+## Cómo correrlo
+
+```bash
+cd src/CazadorDescuentos
+dotnet run
+```
+
+- La base SQLite se crea sola al iniciar (se aplican las migraciones).
+- En `Development` se cargan **ofertas de ejemplo** de las 3 marcas (`Ingesta:CargarDatosDemo`) para ver el frontend sin LLM.
+- Para la extracción real configurar la clave del LLM (API compatible con OpenAI Chat Completions; URL y modelo en `appsettings.json`):
+
+```bash
+dotnet user-secrets set "Ingesta:LlmApiKey" "<clave>"
+dotnet user-secrets set "Ingesta:CargaManualApiKey" "<clave>"
+```
+
+Carga manual de contingencia:
+
+```bash
+curl -X POST https://localhost:7244/admin/ofertas -H "X-Api-Key: <clave>" -H "Content-Type: application/json" \
+  -d '{"marca":"Mostaza","producto":"Combo Mega","categoria":"Hamburguesas","codigo":null,"restricciones":null,
+       "enlaceComercio":"https://mostazaweb.com.ar/","precioOriginal":12900,"precioPromocional":9675,
+       "porcentajeDescuento":25,"vencimiento":"2026-12-01"}'
 ```
