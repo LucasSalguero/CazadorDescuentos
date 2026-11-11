@@ -1,4 +1,5 @@
 using CazadorDescuentos.Data;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace CazadorDescuentos.Modules.CanjeVerificacion.RegistrarVoto;
@@ -23,7 +24,7 @@ internal sealed class RegistrarVotoService
             return false;
         }
 
-        _db.Votos.Add(new Voto
+        var entrada = _db.Votos.Add(new Voto
         {
             OfertaId = ofertaId,
             DeviceId = deviceId,
@@ -36,10 +37,16 @@ internal sealed class RegistrarVotoService
             await _db.SaveChangesAsync(ct);
             return true;
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException ex) when (EsViolacionDeIndiceUnico(ex))
         {
             // Dos votos simultáneos del mismo dispositivo: el índice único rechaza el segundo.
+            // Se saca el voto del contexto para que un SaveChanges posterior no lo reintente.
+            entrada.State = EntityState.Detached;
             return false;
         }
     }
+
+    // SQLITE_CONSTRAINT (19) con SQLITE_CONSTRAINT_UNIQUE (2067).
+    private static bool EsViolacionDeIndiceUnico(DbUpdateException ex) =>
+        ex.InnerException is SqliteException { SqliteErrorCode: 19, SqliteExtendedErrorCode: 2067 };
 }
