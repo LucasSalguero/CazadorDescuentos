@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CazadorDescuentos.Pages.Ofertas;
 
-public class DetalleModel(ICatalogo catalogo, IVerificacion verificacion) : PageModel
+public class DetalleModel(ICatalogo catalogo, IVerificacion verificacion, TimeProvider reloj) : PageModel
 {
     public OfertaDetalle Oferta { get; private set; } = default!;
 
     public Semaforo Semaforo { get; private set; }
+
+    public bool Vencida { get; private set; }
 
     public async Task<IActionResult> OnGetAsync(int id, CancellationToken ct)
     {
@@ -20,6 +22,7 @@ public class DetalleModel(ICatalogo catalogo, IVerificacion verificacion) : Page
         }
 
         Oferta = oferta;
+        Vencida = oferta.VencimientoUtc < reloj.GetUtcNow().UtcDateTime;
         Semaforo = await verificacion.ObtenerSemaforoAsync(id, ct);
         return Page();
     }

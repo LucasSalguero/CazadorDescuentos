@@ -12,6 +12,8 @@ internal sealed class CatalogoService(
 {
     public IReadOnlyList<string> Categorias => Catalogo.Categorias.Todas;
 
+    public IReadOnlyList<string> Marcas => Catalogo.Marcas.Todas;
+
     public Task<int> GuardarOfertaAsync(NuevaOferta oferta, CancellationToken ct = default) =>
         guardarOferta.EjecutarAsync(oferta, ct);
 

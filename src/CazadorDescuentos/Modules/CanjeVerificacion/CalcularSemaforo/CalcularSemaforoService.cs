@@ -1,4 +1,5 @@
 using CazadorDescuentos.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace CazadorDescuentos.Modules.CanjeVerificacion.CalcularSemaforo;
@@ -14,11 +15,35 @@ internal sealed class CalcularSemaforoService
         _opciones = opciones;
     }
 
-    // TODO #14: contar los votos positivos y negativos de la oferta y calcular el semáforo con Calcular.
-    public Task<Semaforo> EjecutarAsync(int ofertaId, CancellationToken ct) =>
-        throw new NotImplementedException();
+    public async Task<Semaforo> EjecutarAsync(int ofertaId, CancellationToken ct)
+    {
+        var votos = _db.Votos.Where(v => v.OfertaId == ofertaId);
+        var positivos = await votos.CountAsync(v => v.Funciono, ct);
+        var negativos = await votos.CountAsync(v => !v.Funciono, ct);
+        return Calcular(positivos, negativos, _opciones.Value);
+    }
 
-    // TODO #14: aplicar los umbrales de OpcionesSemaforo a la cantidad de votos.
-    public static Semaforo Calcular(int votosPositivos, int votosNegativos, OpcionesSemaforo opciones) =>
-        throw new NotImplementedException();
+    /// <summary>
+    /// Con menos de MinimoVotos: SinDatos. Si no, según el % de "Me funcionó":
+    /// ≥ PorcentajeVerde → Verde; &lt; PorcentajeRojo → Rojo; en el medio → Amarillo.
+    /// </summary>
+    public static Semaforo Calcular(int votosPositivos, int votosNegativos, OpcionesSemaforo opciones)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(votosPositivos);
+        ArgumentOutOfRangeException.ThrowIfNegative(votosNegativos);
+
+        var total = votosPositivos + votosNegativos;
+        if (total == 0 || total < opciones.MinimoVotos)
+        {
+            return Semaforo.SinDatos;
+        }
+
+        var porcentaje = votosPositivos * 100m / total;
+        if (porcentaje >= opciones.PorcentajeVerde)
+        {
+            return Semaforo.Verde;
+        }
+
+        return porcentaje < opciones.PorcentajeRojo ? Semaforo.Rojo : Semaforo.Amarillo;
+    }
 }

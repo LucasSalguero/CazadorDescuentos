@@ -8,6 +8,9 @@ public interface ICatalogo
 {
     IReadOnlyList<string> Categorias { get; }
 
+    /// <summary>Marcas de las que se toman ofertas (Mostaza, McDonald's y Burger King).</summary>
+    IReadOnlyList<string> Marcas { get; }
+
     /// <summary>Inserta o actualiza la oferta según su clave única y devuelve su Id.</summary>
     Task<int> GuardarOfertaAsync(NuevaOferta oferta, CancellationToken ct = default);
 
