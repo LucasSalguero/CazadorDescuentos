@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Postre">
+  <rect width="160" height="100" fill="#fce7f3"/>
+  <path d="M66 46h28L80 88z" fill="#e0a458"/>
+  <path d="M70 50l18 10M68 58l16 10M90 50l-18 10" stroke="#c78535" stroke-width="2"/>
+  <circle cx="72" cy="40" r="11" fill="#fff"/><circle cx="88" cy="40" r="11" fill="#f9a8d4"/><circle cx="80" cy="28" r="11" fill="#fde68a"/>
+  <circle cx="80" cy="16" r="4" fill="#dc2626"/>
+</svg>

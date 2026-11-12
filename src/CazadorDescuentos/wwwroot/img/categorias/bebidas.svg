@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Bebida">
+  <rect width="160" height="100" fill="#e0f2fe"/>
+  <path d="M84 14l8-6" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+  <path d="M84 14v18" stroke="#ef4444" stroke-width="4"/>
+  <rect x="62" y="26" width="36" height="8" rx="3" fill="#94a3b8"/>
+  <path d="M64 34h32l-4 52H68z" fill="#ef4444"/>
+  <path d="M66 52h28l-1 14H67z" fill="#fff"/>
+</svg>

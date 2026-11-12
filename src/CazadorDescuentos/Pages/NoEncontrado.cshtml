@@ -1,0 +1,20 @@
+@page
+@{
+    ViewData["Title"] = "No encontrado";
+    var codigo = HttpContext.Response.StatusCode;
+}
+
+<div class="estado-vacio">
+    <span class="estado-vacio-icono" aria-hidden="true">🧭</span>
+    @if (codigo == 404)
+    {
+        <h1 class="h4">No encontramos esta página</h1>
+        <p class="text-body-secondary">Puede que la oferta se haya borrado o que el enlace esté mal escrito.</p>
+    }
+    else
+    {
+        <h1 class="h4">No pudimos abrir esta página</h1>
+        <p class="text-body-secondary">Probá de nuevo en un rato. (Código @codigo)</p>
+    }
+    <a asp-page="/Index" class="btn btn-primary">Ver ofertas activas</a>
+</div>

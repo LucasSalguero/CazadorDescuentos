@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Pollo">
+  <rect width="160" height="100" fill="#fff8e1"/>
+  <path d="M62 30c12-12 34-8 40 6s-2 30-16 34l-10 3-12-12 2-9c-8-6-10-16-4-22z" fill="#d98b2b"/>
+  <path d="M70 34c6-5 16-4 20 2" stroke="#f2b45a" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M64 61l-12 12" stroke="#f3e9dc" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="48" cy="72" r="5" fill="#f3e9dc"/><circle cx="53" cy="79" r="5" fill="#f3e9dc"/>
+</svg>
