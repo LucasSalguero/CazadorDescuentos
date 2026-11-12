@@ -32,6 +32,8 @@ internal sealed class GuardarOfertaService
         entidad.Codigo = VacioANulo(oferta.Codigo);
         entidad.Restricciones = VacioANulo(oferta.Restricciones);
         entidad.EnlaceComercio = oferta.EnlaceComercio.Trim();
+        // Si una actualización llega sin foto, se conserva la que ya tenía.
+        entidad.ImagenUrl = VacioANulo(oferta.ImagenUrl) ?? entidad.ImagenUrl;
         entidad.PrecioOriginal = oferta.PrecioOriginal;
         entidad.PrecioPromocional = oferta.PrecioPromocional;
         entidad.PorcentajeDescuento = oferta.PorcentajeDescuento > 0

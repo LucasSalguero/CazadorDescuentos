@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CazadorDescuentos">
+  <!-- Etiqueta de precio con una mira: "cazar" descuentos -->
+  <rect width="64" height="64" rx="16" fill="#c2410c"/>
+  <path d="M30 12h17a5 5 0 0 1 5 5v17a5 5 0 0 1-1.5 3.5L35.5 52.5a5 5 0 0 1-7 0L11.5 35.5a5 5 0 0 1 0-7L26.5 13.5A5 5 0 0 1 30 12z" fill="#fff"/>
+  <circle cx="42" cy="22" r="3.2" fill="#c2410c"/>
+  <circle cx="31" cy="33" r="8.5" fill="none" stroke="#c2410c" stroke-width="3"/>
+  <path d="M31 21.5v6M31 38.5v6M19.5 33h6M36.5 33h6" stroke="#c2410c" stroke-width="3" stroke-linecap="round"/>
+</svg>

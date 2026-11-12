@@ -19,7 +19,10 @@ public interface ICatalogo
     Task<OfertaDetalle?> ObtenerPorIdAsync(int id, CancellationToken ct = default);
 }
 
-/// <summary>Datos de entrada de una oferta. El vencimiento es un día en hora de Argentina.</summary>
+/// <summary>
+/// Datos de entrada de una oferta. El vencimiento es un día en hora de Argentina.
+/// ImagenUrl es opcional: URL http(s) de la foto o ruta local (/img/...).
+/// </summary>
 public sealed record NuevaOferta(
     string Marca,
     string Producto,
@@ -30,7 +33,8 @@ public sealed record NuevaOferta(
     decimal PrecioOriginal,
     decimal PrecioPromocional,
     decimal PorcentajeDescuento,
-    DateOnly Vencimiento);
+    DateOnly Vencimiento,
+    string? ImagenUrl = null);
 
 public sealed record OfertaDetalle(
     int Id,
@@ -43,6 +47,7 @@ public sealed record OfertaDetalle(
     decimal PrecioOriginal,
     decimal PrecioPromocional,
     decimal PorcentajeDescuento,
-    DateTime VencimientoUtc);
+    DateTime VencimientoUtc,
+    string? ImagenUrl = null);
 
 public sealed record FiltrosOfertas(string? Marca = null, string? Categoria = null);

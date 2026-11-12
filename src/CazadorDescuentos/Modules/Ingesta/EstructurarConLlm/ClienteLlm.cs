@@ -94,7 +94,8 @@ internal sealed class ClienteLlm
                 PrecioOriginal: o.PrecioOriginal ?? 0,
                 PrecioPromocional: o.PrecioPromocional ?? 0,
                 PorcentajeDescuento: o.PorcentajeDescuento ?? 0,
-                Vencimiento: vencimiento));
+                Vencimiento: vencimiento,
+                ImagenUrl: ResolverImagen(o.Imagen, enlacePorDefecto)));
         }
 
         return resultado;
@@ -105,14 +106,28 @@ internal sealed class ClienteLlm
         Recibís el texto de la página de una marca y devolvés SOLO un objeto JSON con esta forma:
         {"ofertas":[{"marca":string,"producto":string,"categoria":string,"precioOriginal":number|null,
         "precioPromocional":number|null,"porcentajeDescuento":number|null,"codigo":string|null,
-        "vencimiento":"yyyy-MM-dd"|null,"restricciones":string|null,"enlaceComercio":string|null}]}
+        "vencimiento":"yyyy-MM-dd"|null,"restricciones":string|null,"enlaceComercio":string|null,"imagen":string|null}]}
         Reglas:
         - Usá solo datos que aparezcan en el texto. Si un dato no está, poné null. No inventes nada.
+        - "imagen": la url de un marcador "[imagen: descripción | url]" del texto que corresponda a ese producto; si no hay, null.
         - "restricciones": la letra chica tal como aparece; si la fuente no menciona condiciones, null.
         - "categoria" debe ser exactamente una de: {{string.Join(", ", categorias)}}.
         - Los precios son en pesos argentinos, como número sin símbolos ni separadores de miles.
         - Si no hay promociones, devolvé {"ofertas":[]}.
         """;
+
+    /// <summary>Convierte la imagen del LLM en una URL http(s) absoluta (las relativas se resuelven contra la página).</summary>
+    internal static string? ResolverImagen(string? imagen, string paginaUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imagen) || !Uri.TryCreate(paginaUrl, UriKind.Absolute, out var pagina))
+        {
+            return null;
+        }
+
+        return Uri.TryCreate(pagina, imagen.Trim(), out var uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp)
+            ? uri.ToString()
+            : null;
+    }
 
     private static string LimpiarBloqueCodigo(string texto)
     {
@@ -145,5 +160,6 @@ internal sealed class ClienteLlm
         string? Codigo,
         string? Vencimiento,
         string? Restricciones,
-        string? EnlaceComercio);
+        string? EnlaceComercio,
+        string? Imagen = null);
 }

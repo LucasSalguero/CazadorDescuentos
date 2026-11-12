@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Pizza">
+  <rect width="160" height="100" fill="#fdecea"/>
+  <path d="M48 26c20-8 44-8 64 0L80 84z" fill="#f6c343"/>
+  <path d="M46 24c22-9 46-9 68 0l-3 7c-20-8-42-8-62 0z" fill="#d9822b"/>
+  <g fill="#c0392b"><circle cx="70" cy="40" r="5"/><circle cx="90" cy="42" r="5"/><circle cx="80" cy="58" r="4.5"/></g>
+</svg>

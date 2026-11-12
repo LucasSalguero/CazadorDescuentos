@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Hamburguesa">
+  <rect width="160" height="100" fill="#fff4e6"/>
+  <path d="M50 46c0-14 13-22 30-22s30 8 30 22z" fill="#e8a33d"/>
+  <g fill="#fff3d6"><ellipse cx="68" cy="33" rx="2" ry="1.2"/><ellipse cx="82" cy="30" rx="2" ry="1.2"/><ellipse cx="94" cy="36" rx="2" ry="1.2"/></g>
+  <path d="M46 50h68l-6 5-6-4-6 4-6-4-6 4-6-4-6 4-6-4-6 4-6-4-6 4z" fill="#58b368"/>
+  <rect x="48" y="54" width="64" height="9" rx="4.5" fill="#7a3e1d"/>
+  <path d="M50 64h60l-4 6H54z" fill="#f6c343"/>
+  <path d="M50 70h60c0 6-5 9-12 9H62c-7 0-12-3-12-9z" fill="#e8a33d"/>
+</svg>

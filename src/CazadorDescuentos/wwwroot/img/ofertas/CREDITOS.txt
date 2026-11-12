@@ -1,0 +1,25 @@
+Fotos ilustrativas de los datos demo.
+Fuente: Unsplash (https://unsplash.com/license) - uso libre, incluso comercial, sin atribucion obligatoria.
+No son fotos oficiales de las marcas.
+
+hamburguesa-doble.jpg  https://images.unsplash.com/photo-1568901346375-23c9450c58cd
+hamburguesa-clasica.jpg  https://images.unsplash.com/photo-1571091718767-18b5b1457add
+hamburguesa-bacon.jpg  https://images.unsplash.com/photo-1586190848861-99aa4a171e90
+hamburguesa-cuadruple.jpg  https://images.unsplash.com/photo-1553979459-d2229ba7433b
+dos-hamburguesas.jpg  https://images.unsplash.com/photo-1550547660-d9450f859349
+combo-papas.jpg  https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5
+big-mac.jpg  https://images.unsplash.com/photo-1619881589316-56c7f9e6b587
+hamburguesa-pollo.jpg  https://images.unsplash.com/photo-1606755962773-d324e0a13086
+hamburguesa-veggie.jpg  https://images.unsplash.com/photo-1520072959219-c595dc870360
+mini-hamburguesas.jpg  https://images.unsplash.com/photo-1610614819513-58e34989848b
+pollo-frito.jpg  https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec
+tiras-pollo.jpg  https://images.unsplash.com/photo-1562967914-608f82629710
+pollo-crocante.jpg  https://images.unsplash.com/photo-1569058242253-92a9c755a0ec
+wrap.jpg  https://images.unsplash.com/photo-1626700051175-6818013e1d4f
+helado-cono.jpg  https://images.unsplash.com/photo-1497034825429-c343d7c6a68f
+copa-helada.jpg  https://images.unsplash.com/photo-1563805042-7684c019e1cb
+licuado.jpg  https://images.unsplash.com/photo-1572490122747-3968b75cc699
+donas.jpg  https://images.unsplash.com/photo-1551024601-bec78aea704b
+cafe.jpg  https://images.unsplash.com/photo-1509042239860-f550ce710b93
+gaseosa.jpg  https://images.unsplash.com/photo-1554866585-cd94860890b7
+gaseosas-hielo.jpg  https://images.unsplash.com/photo-1622483767028-3f66f32aef97

@@ -4,13 +4,16 @@
 
     const contenedor = document.getElementById("canje");
     if (!contenedor) {
-        return;
+        return; // oferta vencida: no hay canje
     }
 
     const ofertaId = Number(contenedor.dataset.ofertaId);
     const codigo = contenedor.dataset.codigo;
     const enlace = contenedor.dataset.enlace;
     const feedback = document.getElementById("feedback");
+    const botonesVoto = feedback.querySelectorAll("[data-voto]");
+    const mensajeVoto = feedback.querySelector("[data-feedback-mensaje]");
+    const avisar = window.avisar || function () { };
 
     // --- Utilidades -------------------------------------------------------------------------
 
@@ -50,18 +53,21 @@
             votos.push(id);
             escribirStorage("cazador.votos", votos);
         }
-    }
-
-    function avisar(texto) {
-        const toast = document.getElementById("toast-canje");
-        if (!toast || !window.bootstrap) {
-            return;
-        }
-        toast.querySelector("[data-toast-texto]").textContent = texto;
-        bootstrap.Toast.getOrCreateInstance(toast, { delay: 2000 }).show();
+        contenedor.querySelector("[data-ya-voto]").hidden = false;
     }
 
     // --- #11 Copiar código -----------------------------------------------------------------
+
+    function seleccionarCodigo() {
+        const caja = contenedor.querySelector(".codigo-cupon");
+        if (caja) {
+            const rango = document.createRange();
+            rango.selectNodeContents(caja);
+            const seleccion = window.getSelection();
+            seleccion.removeAllRanges();
+            seleccion.addRange(rango);
+        }
+    }
 
     async function copiarCodigo(codigo) {
         if (!codigo) {
@@ -81,7 +87,8 @@
             const ok = document.execCommand("copy");
             area.remove();
             if (!ok) {
-                avisar(`No se pudo copiar. Código: ${codigo}`);
+                seleccionarCodigo();
+                avisar("No pudimos copiarlo. Dejamos el código seleccionado: copialo a mano.", { duracion: 5000 });
                 return false;
             }
         }
@@ -98,12 +105,15 @@
 
     // --- #13 Feedback al volver --------------------------------------------------------------
 
-    function mostrarMensaje(texto) {
-        feedback.querySelector("[data-feedback-botones]").hidden = true;
-        feedback.querySelector("[data-feedback-pregunta]").hidden = true;
-        const mensaje = feedback.querySelector("[data-feedback-mensaje]");
-        mensaje.textContent = texto;
-        mensaje.hidden = false;
+    function mostrarMensaje(texto, esError) {
+        mensajeVoto.textContent = texto;
+        mensajeVoto.classList.toggle("text-danger", !!esError);
+        mensajeVoto.hidden = false;
+        if (!esError) {
+            feedback.querySelector("[data-feedback-botones]").hidden = true;
+            feedback.querySelector("[data-feedback-pregunta]").hidden = true;
+            feedback.querySelector("[data-feedback-nota]").hidden = true;
+        }
         feedback.hidden = false;
     }
 
@@ -135,8 +145,19 @@
         }, 4000);
     }
 
-    async function votar(funciono) {
-        feedback.querySelectorAll("[data-voto]").forEach(b => b.disabled = true);
+    function botonesOcupados(ocupados, elegido) {
+        botonesVoto.forEach(b => {
+            b.disabled = ocupados;
+            if (!b.dataset.textoOriginal) {
+                b.dataset.textoOriginal = b.textContent;
+            }
+            b.textContent = ocupados && b === elegido ? "Enviando…" : b.dataset.textoOriginal;
+        });
+    }
+
+    async function votar(boton) {
+        const funciono = boton.dataset.voto === "true";
+        botonesOcupados(true, boton);
         try {
             const respuesta = await fetch("/votos", {
                 method: "POST",
@@ -153,12 +174,16 @@
                 throw new Error(`HTTP ${respuesta.status}`);
             }
         } catch {
-            feedback.querySelectorAll("[data-voto]").forEach(b => b.disabled = false);
-            avisar("No se pudo registrar el voto. Probá de nuevo.");
+            botonesOcupados(false);
+            mostrarMensaje("No pudimos registrar tu voto. Revisá tu conexión y tocá de nuevo tu respuesta.", true);
         }
     }
 
     // --- Eventos -----------------------------------------------------------------------------
+
+    if (yaVoto(ofertaId)) {
+        contenedor.querySelector("[data-ya-voto]").hidden = false;
+    }
 
     contenedor.querySelector("[data-accion='copiar']")?.addEventListener("click", () => copiarCodigo(codigo));
     contenedor.querySelector("[data-accion='canjear']")?.addEventListener("click", async () => {
@@ -168,8 +193,7 @@
         abrirEnlace(enlace);
         preguntarAlVolver(ofertaId);
     });
-    feedback.querySelectorAll("[data-voto]").forEach(boton =>
-        boton.addEventListener("click", () => votar(boton.dataset.voto === "true")));
+    botonesVoto.forEach(boton => boton.addEventListener("click", () => votar(boton)));
     feedback.querySelector("[data-accion='cerrar-feedback']").addEventListener("click", () => {
         feedback.hidden = true;
     });

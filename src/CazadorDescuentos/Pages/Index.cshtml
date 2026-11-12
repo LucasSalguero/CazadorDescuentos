@@ -2,90 +2,174 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Ofertas";
+    string UrlFiltros(string? marca, string? categoria) => Url.Page("/Index", new { Marca = marca, Categoria = categoria })!;
 }
 
-<div class="d-flex flex-wrap align-items-baseline justify-content-between gap-2 mb-2">
-    <h1 class="h3 mb-0">Ofertas de hoy</h1>
-    <span class="text-muted small">@Model.Ofertas.Count @(Model.Ofertas.Count == 1 ? "oferta activa" : "ofertas activas")</span>
-</div>
+<section class="intro">
+    <h1 class="h3 mb-1">Ofertas de hoy</h1>
+    <p class="resumen mb-0" aria-live="polite">
+        Mostrando <strong>@Model.Ofertas.Count</strong> de @Model.TotalActivas @(Model.TotalActivas == 1 ? "oferta activa" : "ofertas activas")
+        @if (Model.HayFiltros && Model.FiltrosDesconocidos.Count == 0)
+        {
+            <span>· @string.Join(" · ", new[] { Model.Marca, Model.Categoria }.Where(f => f is not null))</span>
+        }
+    </p>
+</section>
 
 @if (Model.Preferencias.Count == 0)
 {
-    <div class="alert alert-light border small py-2">
-        ¿Qué tenés ganas de comer? <a asp-page="/Preferencias">Elegí hasta 3 categorías</a> y te mostramos esas ofertas primero.
+    <div class="invitacion">
+        <span class="invitacion-icono" aria-hidden="true">✨</span>
+        <div class="flex-grow-1">
+            <strong>¿Qué tenés ganas de comer?</strong>
+            <div class="small text-body-secondary">Elegí hasta 3 categorías y te mostramos esas ofertas primero.</div>
+        </div>
+        <a asp-page="/Preferencias" class="btn btn-primary btn-sm">Elegir</a>
     </div>
 }
 else
 {
-    <p class="small text-muted mb-2">
-        Primero: @string.Join(", ", Model.Preferencias) · <a asp-page="/Preferencias">cambiar</a>
+    <p class="small text-body-secondary mb-2">
+        Primero vas a ver:
+        @foreach (var p in Model.Preferencias)
+        {
+            <span class="pref-chip">@Formato.IconoCategoria(p) @p</span>
+        }
+        <a asp-page="/Preferencias" class="ms-1">Cambiar</a>
     </p>
 }
 
-<form method="get" class="filtros row g-2 mb-3" aria-label="Filtros">
-    <div class="col-6 col-md-4">
-        <label for="Marca" class="visually-hidden">Marca</label>
-        <select asp-for="Marca" asp-items="@(new SelectList(Model.Marcas))" class="form-select" onchange="this.form.requestSubmit()">
-            <option value="">Todas las marcas</option>
-        </select>
+<section class="filtros" aria-label="Filtros">
+    <div class="filtro-grupo">
+        <h2 class="filtro-titulo" id="titulo-marcas">Marca</h2>
+        <div class="chips" role="group" aria-labelledby="titulo-marcas">
+            <a class="chip" href="@UrlFiltros(null, Model.Categoria)" aria-current="@(Model.Marca is null ? "true" : null)">Todas</a>
+            @foreach (var marca in Model.Marcas)
+            {
+                var activa = marca == Model.Marca;
+                var cantidad = Model.ConteoPorMarca.GetValueOrDefault(marca);
+                if (cantidad == 0 && !activa)
+                {
+                    <span class="chip deshabilitado" aria-disabled="true" title="No hay ofertas de @marca con este filtro">@marca <span class="chip-conteo">0</span></span>
+                }
+                else
+                {
+                    <a class="chip @Formato.ClaseMarca(marca)" href="@UrlFiltros(activa ? null : marca, Model.Categoria)"
+                       aria-current="@(activa ? "true" : null)"
+                       aria-label="@(activa ? $"Quitar filtro {marca}" : $"{marca}, {cantidad} ofertas")">
+                        @marca <span class="chip-conteo">@(activa ? "✕" : cantidad)</span>
+                    </a>
+                }
+            }
+        </div>
     </div>
-    <div class="col-6 col-md-4">
-        <label for="Categoria" class="visually-hidden">Categoría</label>
-        <select asp-for="Categoria" asp-items="@(new SelectList(Model.Categorias))" class="form-select" onchange="this.form.requestSubmit()">
-            <option value="">Todas las categorías</option>
-        </select>
-    </div>
-    <div class="col-12 col-md-4 d-flex gap-2">
-        <noscript><button type="submit" class="btn btn-primary">Filtrar</button></noscript>
-        @if (Model.HayFiltros)
-        {
-            <a asp-page="/Index" class="btn btn-outline-secondary w-100">Quitar filtros</a>
-        }
-    </div>
-</form>
 
-@if (Model.Ofertas.Count == 0)
+    <div class="filtro-grupo">
+        <h2 class="filtro-titulo" id="titulo-categorias">Categoría</h2>
+        <div class="chips" role="group" aria-labelledby="titulo-categorias">
+            <a class="chip" href="@UrlFiltros(Model.Marca, null)" aria-current="@(Model.Categoria is null ? "true" : null)">Todas</a>
+            @foreach (var categoria in Model.Categorias)
+            {
+                var activa = categoria == Model.Categoria;
+                var cantidad = Model.ConteoPorCategoria.GetValueOrDefault(categoria);
+                if (cantidad == 0 && !activa)
+                {
+                    <span class="chip deshabilitado" aria-disabled="true" title="No hay ofertas de @categoria con este filtro">@Formato.IconoCategoria(categoria) @categoria <span class="chip-conteo">0</span></span>
+                }
+                else
+                {
+                    <a class="chip" href="@UrlFiltros(Model.Marca, activa ? null : categoria)"
+                       aria-current="@(activa ? "true" : null)"
+                       aria-label="@(activa ? $"Quitar filtro {categoria}" : $"{categoria}, {cantidad} ofertas")">
+                        <span aria-hidden="true">@Formato.IconoCategoria(categoria)</span> @categoria <span class="chip-conteo">@(activa ? "✕" : cantidad)</span>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+
+    @if (Model.HayFiltros)
+    {
+        <a asp-page="/Index" class="btn btn-sm btn-outline-secondary quitar-filtros">Quitar filtros</a>
+    }
+</section>
+
+@if (Model.FiltrosDesconocidos.Count > 0)
 {
-    <div class="text-center text-muted py-5">
-        <p class="mb-2">No hay ofertas activas@(Model.HayFiltros ? " con esos filtros" : "") por ahora.</p>
+    <div class="estado-vacio" role="alert">
+        <span class="estado-vacio-icono" aria-hidden="true">🤔</span>
+        <p class="fw-semibold mb-1">@string.Join(" ", Model.FiltrosDesconocidos)</p>
+        <p class="text-body-secondary mb-3">Puede que el enlace esté mal escrito. Elegí un filtro de la lista de arriba.</p>
+        <a asp-page="/Index" class="btn btn-primary">Ver todas las ofertas</a>
+    </div>
+}
+else if (Model.Ofertas.Count == 0)
+{
+    <div class="estado-vacio">
+        <span class="estado-vacio-icono" aria-hidden="true">🔍</span>
         @if (Model.HayFiltros)
         {
-            <a asp-page="/Index">Ver todas las ofertas</a>
+            <p class="fw-semibold mb-1">No hay ofertas activas con esos filtros.</p>
+            <p class="text-body-secondary mb-3">Probá con menos filtros:</p>
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                @if (Model.Marca is not null && Model.Categoria is not null)
+                {
+                    <a class="btn btn-outline-primary" href="@UrlFiltros(Model.Marca, null)">Todo @Model.Marca</a>
+                    <a class="btn btn-outline-primary" href="@UrlFiltros(null, Model.Categoria)">@Model.Categoria de todas las marcas</a>
+                }
+                <a class="btn btn-primary" asp-page="/Index">Ver todas las ofertas</a>
+            </div>
+        }
+        else
+        {
+            <p class="fw-semibold mb-1">Todavía no hay ofertas activas.</p>
+            <p class="text-body-secondary mb-0">Las buscamos todos los días. Volvé más tarde.</p>
         }
     </div>
 }
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
     @foreach (var item in Model.Ofertas)
     {
         var o = item.Oferta;
+        var respaldo = Formato.ImagenCategoria(o.Categoria);
+        var vencePronto = Formato.VencePronto(o.VencimientoUtc, Model.AhoraUtc);
         <div class="col">
-            <article class="card oferta h-100 @Formato.ClaseMarca(o.Marca)">
+            <article class="card oferta h-100 @Formato.ClaseMarca(o.Marca) @(item.CoincideConPreferencias ? "coincide" : "")">
+                <div class="oferta-foto">
+                    <img src="@(o.ImagenUrl ?? respaldo)" data-respaldo="@respaldo" alt="" loading="lazy"
+                         class="@(o.ImagenUrl is null ? "es-ilustracion" : "")" width="640" height="400" />
+                    @if (o.PorcentajeDescuento > 0)
+                    {
+                        <span class="descuento-sello" aria-label="@Formato.Porcentaje(o.PorcentajeDescuento) de descuento">-@Formato.Porcentaje(o.PorcentajeDescuento)</span>
+                    }
+                    @if (vencePronto)
+                    {
+                        <span class="vence-pronto">⏰ @Formato.Vence(o.VencimientoUtc, Model.AhoraUtc)</span>
+                    }
+                </div>
                 <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-start mb-1">
+                    <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
                         <span class="marca-chip">@o.Marca</span>
-                        @if (o.PorcentajeDescuento > 0)
-                        {
-                            <span class="descuento">-@Formato.Porcentaje(o.PorcentajeDescuento)</span>
-                        }
+                        <span class="small text-body-secondary categoria-tarjeta">@Formato.IconoCategoria(o.Categoria) @o.Categoria</span>
                     </div>
                     <h2 class="h6 card-title mb-1">
-                        <a asp-page="/Ofertas/Detalle" asp-route-id="@o.Id" class="stretched-link text-reset text-decoration-none">@o.Producto</a>
+                        <a href="@Url.Page("/Ofertas/Detalle", new { id = o.Id, Marca = Model.Marca, Categoria = Model.Categoria })"
+                           class="stretched-link text-reset text-decoration-none">@o.Producto</a>
                     </h2>
                     <div class="mb-2">
                         <span class="precio">@Formato.Pesos(o.PrecioPromocional)</span>
                         @if (o.PrecioOriginal > o.PrecioPromocional)
                         {
-                            <s class="text-muted small ms-1">@Formato.Pesos(o.PrecioOriginal)</s>
+                            <s class="text-body-secondary small ms-1"><span class="visually-hidden">Antes </span>@Formato.Pesos(o.PrecioOriginal)</s>
                         }
                     </div>
-                    <div class="mt-auto d-flex flex-wrap gap-1 small">
-                        <span class="badge text-bg-light border">@o.Categoria</span>
-                        <span class="badge text-bg-light border">@Formato.Vence(o.VencimientoUtc, Model.AhoraUtc)</span>
-                        @if (o.Codigo is not null)
+                    <div class="mt-auto d-flex flex-wrap gap-2 small text-body-secondary meta">
+                        @if (!vencePronto)
                         {
-                            <span class="badge text-bg-light border">Con código</span>
+                            <span>📅 @Formato.Vence(o.VencimientoUtc, Model.AhoraUtc)</span>
                         }
+                        <span>@(o.Codigo is null ? "🛍️ Sin código" : "🎟️ Con código")</span>
                     </div>
                     @if (item.Etiqueta is not null)
                     {

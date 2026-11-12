@@ -1,47 +1,68 @@
-﻿<!DOCTYPE html>
-<html lang="es">
+﻿@{
+    var pagina = ViewContext.RouteData.Values["page"] as string ?? "";
+    string? Actual(params string[] paginas) => paginas.Contains(pagina) ? "page" : null;
+    var aviso = TempData["Aviso"] as string;
+}
+<!DOCTYPE html>
+<html lang="es-AR">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - CazadorDescuentos</title>
+    <meta name="theme-color" content="#c2410c" />
+    <title>@ViewData["Title"] · CazadorDescuentos</title>
+    <link rel="icon" href="~/img/logo.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="~/favicon.ico" />
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CazadorDescuentos.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">CazadorDescuentos</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Mostrar navegación">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Ofertas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Preferencias">Preferencias</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+    <a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
+
+    <header class="encabezado">
+        <div class="container d-flex align-items-center justify-content-between gap-3">
+            <a class="logo" asp-page="/Index" aria-label="CazadorDescuentos, ir al inicio">
+                <img src="~/img/logo.svg" alt="" width="36" height="36" />
+                <span class="logo-texto"><strong>Cazador</strong>Descuentos</span>
+            </a>
+            <nav class="nav-escritorio" aria-label="Principal">
+                <a asp-page="/Index" aria-current="@Actual("/Index", "/Ofertas/Detalle")">Ofertas</a>
+                <a asp-page="/Preferencias" aria-current="@Actual("/Preferencias")">Mis preferencias</a>
+                <a asp-page="/Ayuda" aria-current="@Actual("/Ayuda")">¿Cómo funciona?</a>
+            </nav>
+        </div>
     </header>
+
     <div class="container">
-        <main role="main" class="pb-3">
+        <main id="contenido" role="main" class="pb-4" tabindex="-1">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - CazadorDescuentos
+    <footer class="pie">
+        <div class="container small">
+            <p class="mb-1">Las ofertas se toman de los sitios de cada marca. Revisá las condiciones antes de canjear.</p>
+            <p class="mb-0"><a asp-page="/Ayuda">¿Cómo funciona?</a> · &copy; 2026 CazadorDescuentos</p>
         </div>
     </footer>
+
+    @* En el celular la navegación queda abajo, al alcance del pulgar. *@
+    <nav class="nav-movil" aria-label="Principal">
+        <a asp-page="/Index" aria-current="@Actual("/Index", "/Ofertas/Detalle")"><span aria-hidden="true">🏷️</span>Ofertas</a>
+        <a asp-page="/Preferencias" aria-current="@Actual("/Preferencias")"><span aria-hidden="true">❤️</span>Preferencias</a>
+        <a asp-page="/Ayuda" aria-current="@Actual("/Ayuda")"><span aria-hidden="true">❓</span>Ayuda</a>
+    </nav>
+
+    <div class="toast-container position-fixed start-50 translate-middle-x p-3 contenedor-avisos">
+        <div id="aviso-global" class="toast align-items-center text-bg-dark border-0" role="status" aria-live="polite" aria-atomic="true"
+             data-mostrar="@(aviso is null ? "false" : "true")">
+            <div class="d-flex">
+                <div class="toast-body" data-aviso-texto>@aviso</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar aviso"></button>
+            </div>
+        </div>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
