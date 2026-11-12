@@ -32,6 +32,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Páginas de error amigables (404, etc.) solo para las páginas; los endpoints de API devuelven su código tal cual.
+app.UseWhen(
+    contexto => !contexto.Request.Path.StartsWithSegments("/votos") && !contexto.Request.Path.StartsWithSegments("/admin"),
+    rama => rama.UseStatusCodePagesWithReExecute("/NoEncontrado"));
+
 app.UseRouting();
 
 app.MapStaticAssets();

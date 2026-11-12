@@ -3,26 +3,47 @@
 @{
     var o = Model.Oferta;
     ViewData["Title"] = o.Producto;
-    var semaforo = Formato.Semaforo(Model.Semaforo);
+    var semaforo = Formato.Semaforo(Model.Votos.Semaforo);
     var ahorro = o.PrecioOriginal - o.PrecioPromocional;
+    var respaldo = Formato.ImagenCategoria(o.Categoria);
+    var fotoIlustrativa = o.ImagenUrl is null || o.ImagenUrl.StartsWith("/img/");
 }
 
-<nav class="mb-2"><a asp-page="/Index" class="small">&larr; Volver a las ofertas</a></nav>
+<nav class="mb-2" aria-label="Volver">
+    <a href="@Model.UrlVolver" class="volver">&larr; Volver a las ofertas@(Model.Marca is not null || Model.Categoria is not null ? " filtradas" : "")</a>
+</nav>
 
-<article class="card oferta oferta-detalle @Formato.ClaseMarca(o.Marca)">
+<article class="card oferta oferta-detalle @Formato.ClaseMarca(o.Marca) @(Model.Vencida ? "vencida" : "")">
+    <figure class="oferta-foto oferta-foto-grande mb-0">
+        <img src="@(o.ImagenUrl ?? respaldo)" data-respaldo="@respaldo" alt="@(o.ImagenUrl is null ? "" : $"Foto de {o.Producto}")"
+             class="@(o.ImagenUrl is null ? "es-ilustracion" : "")" width="640" height="400" />
+        @if (o.PorcentajeDescuento > 0 && !Model.Vencida)
+        {
+            <span class="descuento-sello">-@Formato.Porcentaje(o.PorcentajeDescuento)</span>
+        }
+        @if (fotoIlustrativa)
+        {
+            <figcaption class="foto-aviso">Imagen ilustrativa</figcaption>
+        }
+    </figure>
+
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-start gap-2">
+        <div class="d-flex justify-content-between align-items-center gap-2">
             <span class="marca-chip">@o.Marca</span>
-            <span class="badge @semaforo.Clase" title="Según los votos de quienes la usaron">
-                <span class="semaforo-punto"></span> @semaforo.Texto
-            </span>
+            <span class="small text-body-secondary">@Formato.IconoCategoria(o.Categoria) @o.Categoria</span>
         </div>
 
         <h1 class="h4 mt-2 mb-3">@o.Producto</h1>
 
         @if (Model.Vencida)
         {
-            <div class="alert alert-warning py-2">Esta oferta venció el @Formato.Fecha(o.VencimientoUtc).</div>
+            <div class="alert alert-warning" role="alert">
+                <strong>Esta oferta venció el @Formato.Fecha(o.VencimientoUtc).</strong>
+                Ya no se puede canjear, pero puede que @o.Marca tenga otras vigentes.
+                <div class="mt-2">
+                    <a class="btn btn-sm btn-warning" href="@Url.Page("/Index", new { Marca = o.Marca })">Ver ofertas activas de @o.Marca</a>
+                </div>
+            </div>
         }
 
         <dl class="row ficha mb-3">
@@ -42,55 +63,87 @@
             }
 
             <dt class="col-6">Vence</dt>
-            <dd class="col-6 text-end">@Formato.Fecha(o.VencimientoUtc)</dd>
-
-            <dt class="col-6">Categoría</dt>
-            <dd class="col-6 text-end">@o.Categoria</dd>
+            <dd class="col-6 text-end">
+                @Formato.Fecha(o.VencimientoUtc)
+                @if (!Model.Vencida)
+                {
+                    <div class="small @(Formato.VencePronto(o.VencimientoUtc, Model.AhoraUtc) ? "text-danger fw-semibold" : "text-body-secondary")">
+                        @Formato.Vence(o.VencimientoUtc, Model.AhoraUtc) (23:59 h)
+                    </div>
+                }
+            </dd>
         </dl>
 
         <h2 class="h6">Condiciones</h2>
-        <p class="text-muted">@(o.Restricciones ?? "Sin condiciones especiales")</p>
+        <p class="text-body-secondary">@(o.Restricciones ?? "Sin condiciones especiales")</p>
 
-        <div id="canje" class="d-grid gap-2"
-             data-oferta-id="@o.Id"
-             data-codigo="@o.Codigo"
-             data-enlace="@o.EnlaceComercio">
-            @if (o.Codigo is not null)
-            {
-                <div class="codigo-cupon" aria-label="Código del cupón">@o.Codigo</div>
-                <button type="button" class="btn btn-primary btn-lg" data-accion="canjear">Copiar código e ir a @o.Marca</button>
-                <button type="button" class="btn btn-outline-primary" data-accion="copiar">Solo copiar el código</button>
-            }
-            else
-            {
-                <button type="button" class="btn btn-primary btn-lg" data-accion="canjear">Ir a @o.Marca</button>
-            }
+        <section class="semaforo-bloque @semaforo.Clase" aria-labelledby="titulo-semaforo">
+            <div class="d-flex align-items-center gap-2">
+                <span class="semaforo-punto" aria-hidden="true"></span>
+                <h2 class="h6 mb-0" id="titulo-semaforo">@semaforo.Texto</h2>
+            </div>
+            <p class="small mb-0 mt-1">
+                @Formato.DetalleSemaforo(Model.Votos, Model.Reglas)
+                <a href="/Ayuda#semaforo">¿Cómo se calcula?</a>
+            </p>
+        </section>
 
-            <section id="feedback" class="feedback card border-primary mt-2" hidden aria-live="polite">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <p class="fw-semibold mb-2" data-feedback-pregunta>¿Te funcionó la oferta?</p>
-                        <button type="button" class="btn-close" data-accion="cerrar-feedback" aria-label="Cerrar sin responder"></button>
-                    </div>
-                    <div class="d-flex gap-2" data-feedback-botones>
-                        <button type="button" class="btn btn-success flex-fill" data-voto="true">👍 Me funcionó</button>
-                        <button type="button" class="btn btn-outline-danger flex-fill" data-voto="false">👎 No me funcionó</button>
-                    </div>
-                    <p class="mb-0 small text-muted" data-feedback-mensaje hidden></p>
+        @if (!Model.Vencida)
+        {
+            <section class="canje mt-3" aria-labelledby="titulo-canje">
+                <h2 class="h6" id="titulo-canje">Cómo canjearla</h2>
+                <ol class="pasos small text-body-secondary">
+                    @if (o.Codigo is not null)
+                    {
+                        <li>Tocá <strong>Copiar código e ir</strong>: copiamos el código y abrimos @o.Marca.</li>
+                        <li>Pegá el código al pagar en @o.Marca.</li>
+                    }
+                    else
+                    {
+                        <li>Esta oferta <strong>no necesita código</strong>.</li>
+                        <li>Tocá <strong>Ir a @o.Marca</strong> y pedí la promo.</li>
+                    }
+                    <li>Volvé y contanos si te funcionó.</li>
+                </ol>
+
+                <div id="canje" class="d-grid gap-2"
+                     data-oferta-id="@o.Id"
+                     data-codigo="@o.Codigo"
+                     data-enlace="@o.EnlaceComercio"
+                     data-marca="@o.Marca">
+                    @if (o.Codigo is not null)
+                    {
+                        <div class="codigo-cupon" aria-label="Código del cupón">@o.Codigo</div>
+                        <button type="button" class="btn btn-primary btn-lg" data-accion="canjear">Copiar código e ir a @o.Marca <span aria-hidden="true">↗</span></button>
+                        <button type="button" class="btn btn-outline-primary" data-accion="copiar">Solo copiar el código</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary btn-lg" data-accion="canjear">Ir a @o.Marca <span aria-hidden="true">↗</span></button>
+                    }
+                    <p class="small text-body-secondary text-center mb-0">@o.Marca se abre en una pestaña nueva. Esta página queda abierta.</p>
+
+                    <p class="ya-voto small text-center mb-0" data-ya-voto hidden>✔ Ya votaste esta oferta. ¡Gracias!</p>
+
+                    <section id="feedback" class="feedback card mt-2" hidden aria-live="polite" aria-labelledby="pregunta-feedback">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <p class="fw-semibold mb-2" id="pregunta-feedback" data-feedback-pregunta>¿Te funcionó la oferta?</p>
+                                <button type="button" class="btn-close" data-accion="cerrar-feedback" aria-label="Cerrar sin responder"></button>
+                            </div>
+                            <div class="d-flex gap-2" data-feedback-botones>
+                                <button type="button" class="btn btn-success flex-fill" data-voto="true">👍 Me funcionó</button>
+                                <button type="button" class="btn btn-outline-danger flex-fill" data-voto="false">👎 No me funcionó</button>
+                            </div>
+                            <p class="mb-0 small" data-feedback-mensaje hidden></p>
+                            <p class="mb-0 mt-2 small text-body-secondary" data-feedback-nota>Tu voto es anónimo y ayuda a otros a saber si la oferta funciona.</p>
+                        </div>
+                    </section>
                 </div>
             </section>
-        </div>
+        }
     </div>
 </article>
-
-<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3">
-    <div id="toast-canje" class="toast align-items-center text-bg-dark border-0" role="status" aria-live="polite" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body" data-toast-texto>Código copiado</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
     <script src="~/js/canje.js" asp-append-version="true"></script>

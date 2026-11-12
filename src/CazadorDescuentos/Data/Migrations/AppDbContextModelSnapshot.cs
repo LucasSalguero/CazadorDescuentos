@@ -65,6 +65,9 @@ namespace CazadorDescuentos.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ImagenUrl")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Marca")
                         .IsRequired()
                         .HasColumnType("TEXT");

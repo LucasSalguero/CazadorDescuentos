@@ -1,31 +1,43 @@
 @page
 @model PreferenciasModel
 @{
-    ViewData["Title"] = "Preferencias";
+    ViewData["Title"] = "Mis preferencias";
 }
 
 <h1 class="h3">¿Qué te gusta comer?</h1>
-<p class="text-muted">Elegí hasta 3 categorías y vas a ver primero sus ofertas. Se guarda en este dispositivo, sin crear cuenta.</p>
+<p class="text-body-secondary">
+    Elegí hasta @Model.Maximo categorías y vas a ver primero sus ofertas.
+    Se guarda solo en este dispositivo, sin crear cuenta. Podés cambiarlo cuando quieras.
+</p>
 
 <form method="post" id="form-preferencias">
-    <div class="d-flex flex-wrap gap-2 mb-2">
-        @foreach (var categoria in Model.Categorias)
-        {
-            <input class="btn-check" type="checkbox" name="Seleccionadas" value="@categoria" id="cat-@categoria"
-                   autocomplete="off" checked="@Model.Seleccionadas.Contains(categoria)" />
-            <label class="btn btn-outline-primary rounded-pill" for="cat-@categoria">@categoria</label>
-        }
-    </div>
-    <p class="small text-muted" id="contador-preferencias" aria-live="polite"></p>
-    <div class="d-flex flex-wrap gap-2">
+    <fieldset>
+        <legend class="visually-hidden">Categorías preferidas (hasta @Model.Maximo)</legend>
+        <div class="d-flex flex-wrap gap-2 mb-2">
+            @foreach (var categoria in Model.Categorias)
+            {
+                <input class="btn-check" type="checkbox" name="Seleccionadas" value="@categoria" id="cat-@categoria"
+                       autocomplete="off" checked="@Model.Seleccionadas.Contains(categoria)" aria-describedby="contador-preferencias" />
+                <label class="btn btn-outline-primary rounded-pill chip-preferencia" for="cat-@categoria">
+                    <span aria-hidden="true">@Formato.IconoCategoria(categoria)</span> @categoria
+                </label>
+            }
+        </div>
+    </fieldset>
+    <p class="small text-body-secondary" id="contador-preferencias" aria-live="polite">Podés elegir hasta @Model.Maximo.</p>
+    <div class="d-flex flex-wrap align-items-center gap-2">
         <button type="submit" class="btn btn-primary">Guardar y ver ofertas</button>
         <a asp-page="/Index" class="btn btn-link">Omitir</a>
+        @if (Model.TieneGuardadas)
+        {
+            <button type="submit" asp-page-handler="Borrar" class="btn btn-link text-danger ms-auto">Borrar mis preferencias</button>
+        }
     </div>
 </form>
 
 @section Scripts {
     <script>
-        // Bloquea más de 3 selecciones (el servidor también lo valida).
+        // Bloquea más de 3 selecciones y explica por qué (el servidor también lo valida).
         (function () {
             const maximo = @Model.Maximo;
             const casillas = Array.from(document.querySelectorAll("#form-preferencias input[type=checkbox]"));
@@ -33,7 +45,11 @@
             function actualizar() {
                 const marcadas = casillas.filter(c => c.checked).length;
                 casillas.forEach(c => c.disabled = !c.checked && marcadas >= maximo);
-                contador.textContent = `${marcadas} de ${maximo} seleccionadas`;
+                contador.textContent = marcadas === 0
+                    ? `Podés elegir hasta ${maximo}.`
+                    : marcadas < maximo
+                        ? `${marcadas} de ${maximo} seleccionadas.`
+                        : `${marcadas} de ${maximo} seleccionadas. Llegaste al máximo: desmarcá una para elegir otra.`;
             }
             casillas.forEach(c => c.addEventListener("change", actualizar));
             actualizar();

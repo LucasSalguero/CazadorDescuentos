@@ -1,0 +1,63 @@
+@page
+@model AyudaModel
+@{
+    ViewData["Title"] = "¿Cómo funciona?";
+    var r = Model.Reglas;
+}
+
+<h1 class="h3">¿Cómo funciona?</h1>
+<p class="text-body-secondary">Juntamos las promos de Mostaza, McDonald's y Burger King en un solo lugar para que no tengas que buscarlas.</p>
+
+<ol class="pasos-ayuda">
+    <li>
+        <span class="paso-icono" aria-hidden="true">🔎</span>
+        <div><strong>Elegí una oferta.</strong> Filtrá por marca o categoría. Si nos contás qué te gusta, te mostramos eso primero.</div>
+    </li>
+    <li>
+        <span class="paso-icono" aria-hidden="true">📋</span>
+        <div><strong>Copiá el código.</strong> Con un toque lo copiamos y abrimos el sitio de la marca en otra pestaña.</div>
+    </li>
+    <li>
+        <span class="paso-icono" aria-hidden="true">🍔</span>
+        <div><strong>Canjealo.</strong> Pegá el código al pagar. Si la oferta no tiene código, pedí la promo directamente.</div>
+    </li>
+    <li>
+        <span class="paso-icono" aria-hidden="true">👍</span>
+        <div><strong>Contanos si funcionó.</strong> Tu voto ayuda a otros a no perder tiempo.</div>
+    </li>
+</ol>
+
+<h2 class="h5 mt-4" id="semaforo">¿Qué significa el semáforo?</h2>
+<p>Muestra si a otras personas les funcionó la oferta. Se calcula con sus votos:</p>
+<ul class="list-unstyled semaforo-leyenda">
+    <li class="semaforo-sin-datos"><span class="semaforo-punto" aria-hidden="true"></span> <strong>Sin datos todavía:</strong> tiene menos de @r.MinimoVotos votos.</li>
+    <li class="semaforo-verde"><span class="semaforo-punto" aria-hidden="true"></span> <strong>Funciona:</strong> al @r.PorcentajeVerde % o más le funcionó.</li>
+    <li class="semaforo-amarillo"><span class="semaforo-punto" aria-hidden="true"></span> <strong>Resultados mixtos:</strong> entre el @r.PorcentajeRojo % y el @r.PorcentajeVerde %.</li>
+    <li class="semaforo-rojo"><span class="semaforo-punto" aria-hidden="true"></span> <strong>Probablemente no funcione:</strong> a menos del @r.PorcentajeRojo % le funcionó.</li>
+</ul>
+
+<h2 class="h5 mt-4">Preguntas frecuentes</h2>
+<div class="preguntas">
+    <details>
+        <summary>¿Las ofertas son oficiales?</summary>
+        <p>Las tomamos de los sitios de cada marca y las revisamos todos los días. Antes de pagar, confirmá las condiciones en el sitio de la marca. Las fotos pueden ser ilustrativas.</p>
+    </details>
+    <details>
+        <summary>¿Por qué no veo una oferta que vi ayer?</summary>
+        <p>Probablemente venció. Las ofertas valen hasta las 23:59 del día de vencimiento (hora de Argentina) y después dejan de aparecer en la lista.</p>
+    </details>
+    <details>
+        <summary>¿Necesito crear una cuenta?</summary>
+        <p>No. Tus preferencias se guardan solo en este dispositivo. Para los votos usamos un identificador anónimo, sin datos personales.</p>
+    </details>
+    <details>
+        <summary>El código no se copió, ¿qué hago?</summary>
+        <p>Algunos navegadores no permiten copiar automáticamente. En ese caso dejamos el código seleccionado para que lo copies a mano (mantené apretado sobre el código).</p>
+    </details>
+    <details>
+        <summary>¿Cómo cambio o borro mis preferencias?</summary>
+        <p>Entrá a <a asp-page="/Preferencias">Mis preferencias</a>. Ahí podés elegir otras o borrarlas.</p>
+    </details>
+</div>
+
+<a asp-page="/Index" class="btn btn-primary mt-3">Ver ofertas</a>

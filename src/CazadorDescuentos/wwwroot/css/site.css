@@ -1,115 +1,277 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
-
-/* ---- CazadorDescuentos ---------------------------------------------------------------- */
+/* ==== CazadorDescuentos ===================================================================
+   Un solo juego de colores, radios y espacios para toda la app (consistencia y estándares).
+   ========================================================================================== */
 
 :root {
+  --cd-primario: #c2410c;          /* naranja del logo; contraste AA con texto blanco */
+  --cd-primario-oscuro: #9a3412;
+  --cd-primario-suave: #fff1e8;
+  --cd-tinta: #1f2328;
+  --cd-suave: #5f6670;
+  --cd-borde: #e7e2dc;
+  --cd-fondo: #f7f5f2;
+  --cd-radio: 14px;
+  --cd-sombra: 0 1px 3px rgba(0, 0, 0, .07);
+  --cd-sombra-alta: 0 8px 20px rgba(0, 0, 0, .12);
+  --cd-nav-movil: 64px;
+
   --marca-color: #6c757d;
   --marca-texto: #fff;
+
+  --bs-primary: var(--cd-primario);
+  --bs-primary-rgb: 194, 65, 12;
+  --bs-link-color: var(--cd-primario-oscuro);
+  --bs-link-color-rgb: 154, 52, 18;
+  --bs-link-hover-color: #7c2d12;
+  --bs-body-color: var(--cd-tinta);
 }
+
+html { font-size: 15px; }
+@media (min-width: 768px) { html { font-size: 16px; } }
 
 body {
-  background: #f6f7f9;
+  background: var(--cd-fondo);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(var(--cd-nav-movil) + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) { body { padding-bottom: 0; } }
+body > .container { flex: 1 0 auto; }
+main:focus { outline: none; }
+
+/* --- Botones (mismo color de acción en toda la app) -------------------------------------- */
+.btn-primary {
+  --bs-btn-bg: var(--cd-primario);
+  --bs-btn-border-color: var(--cd-primario);
+  --bs-btn-hover-bg: var(--cd-primario-oscuro);
+  --bs-btn-hover-border-color: var(--cd-primario-oscuro);
+  --bs-btn-active-bg: #7c2d12;
+  --bs-btn-active-border-color: #7c2d12;
+  --bs-btn-disabled-bg: var(--cd-primario);
+  --bs-btn-disabled-border-color: var(--cd-primario);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--cd-primario-oscuro);
+  --bs-btn-border-color: var(--cd-primario);
+  --bs-btn-hover-bg: var(--cd-primario);
+  --bs-btn-hover-border-color: var(--cd-primario);
+  --bs-btn-active-bg: var(--cd-primario);
+  --bs-btn-active-border-color: var(--cd-primario);
+  --bs-btn-disabled-color: #a8a29e;
+  --bs-btn-disabled-border-color: #d6d3d1;
+}
+.btn { border-radius: 10px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: .35rem; }
+.btn-sm { min-height: 36px; }
+
+/* Foco siempre visible al navegar con teclado */
+:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+.btn:focus-visible, .btn-check:focus-visible + .btn { box-shadow: 0 0 0 .25rem rgba(37, 99, 235, .45); outline: none; }
+
+.saltar-contenido {
+  position: absolute; left: -999px; top: .5rem; z-index: 2000;
+  background: var(--cd-tinta); color: #fff; padding: .5rem .75rem; border-radius: 8px;
+}
+.saltar-contenido:focus { left: .5rem; }
+
+/* --- Encabezado y navegación ------------------------------------------------------------- */
+.encabezado {
+  background: #fff;
+  border-bottom: 1px solid var(--cd-borde);
+  padding: .6rem 0;
+  margin-bottom: 1rem;
+  position: sticky; top: 0; z-index: 1020;
+}
+.logo { display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; color: var(--cd-tinta); }
+.logo-texto { font-size: 1.15rem; letter-spacing: -.01em; }
+.logo-texto strong { color: var(--cd-primario); font-weight: 800; }
+
+.nav-escritorio { display: none; gap: .25rem; }
+.nav-escritorio a {
+  color: var(--cd-suave); text-decoration: none; padding: .5rem .8rem; border-radius: 999px; font-weight: 500;
+}
+.nav-escritorio a:hover { background: var(--cd-fondo); color: var(--cd-tinta); }
+.nav-escritorio a[aria-current="page"] { background: var(--cd-primario-suave); color: var(--cd-primario-oscuro); font-weight: 600; }
+@media (min-width: 768px) { .nav-escritorio { display: flex; } }
+
+.nav-movil {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030;
+  display: flex; background: #fff; border-top: 1px solid var(--cd-borde);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-movil a {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  height: var(--cd-nav-movil); font-size: .75rem; color: var(--cd-suave); text-decoration: none;
+}
+.nav-movil a span { font-size: 1.25rem; line-height: 1; }
+.nav-movil a[aria-current="page"] { color: var(--cd-primario-oscuro); font-weight: 700; box-shadow: inset 0 3px 0 var(--cd-primario); }
+@media (min-width: 768px) { .nav-movil { display: none; } }
+
+.contenedor-avisos { bottom: calc(var(--cd-nav-movil) + env(safe-area-inset-bottom)); z-index: 1090; }
+@media (min-width: 768px) { .contenedor-avisos { bottom: 0; } }
+
+.pie { border-top: 1px solid var(--cd-borde); color: var(--cd-suave); padding: 1rem 0; margin-top: 1rem; background: #fff; }
+
+/* --- Feed: resumen, invitación y filtros ------------------------------------------------- */
+.intro { margin-bottom: .75rem; }
+.resumen { color: var(--cd-suave); }
+
+.invitacion {
+  display: flex; align-items: center; gap: .75rem;
+  background: #fff; border: 1px solid var(--cd-borde); border-radius: var(--cd-radio);
+  padding: .75rem 1rem; margin-bottom: 1rem;
+}
+.invitacion-icono { font-size: 1.5rem; }
+
+.pref-chip {
+  display: inline-block; background: #fff; border: 1px solid var(--cd-borde);
+  border-radius: 999px; padding: .1rem .55rem; margin: 0 .1rem; color: var(--cd-tinta);
 }
 
-/* Colores de cada marca (Formato.ClaseMarca) */
+.filtros { margin-bottom: 1rem; }
+.filtro-grupo { margin-bottom: .5rem; }
+.filtro-titulo { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--cd-suave); margin: 0 0 .3rem; font-weight: 600; }
+
+/* En el celular los chips se deslizan en una fila; en pantallas grandes se acomodan en varias. */
+.chips {
+  display: flex; gap: .5rem; overflow-x: auto; padding: .1rem .1rem .35rem;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.chips::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) { .chips { flex-wrap: wrap; overflow: visible; } }
+
+.chip {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: .35rem;
+  min-height: 40px; padding: .35rem .85rem; border-radius: 999px;
+  background: #fff; border: 1px solid var(--cd-borde); color: var(--cd-tinta);
+  text-decoration: none; font-weight: 500; white-space: nowrap;
+}
+.chip:hover { border-color: var(--cd-primario); color: var(--cd-tinta); }
+.chip[aria-current="true"] { background: var(--cd-tinta); border-color: var(--cd-tinta); color: #fff; }
+.chip[aria-current="true"].marca-mostaza,
+.chip[aria-current="true"].marca-mcdonalds,
+.chip[aria-current="true"].marca-burger-king { background: var(--marca-color); border-color: var(--marca-color); color: var(--marca-texto); }
+.chip-conteo {
+  font-size: .75rem; background: var(--cd-fondo); color: var(--cd-suave);
+  border-radius: 999px; padding: 0 .45rem; min-width: 1.5rem; text-align: center;
+}
+.chip[aria-current="true"] .chip-conteo { background: rgba(255, 255, 255, .25); color: inherit; }
+.chip.deshabilitado { opacity: .5; cursor: not-allowed; }
+.quitar-filtros { margin-top: .25rem; }
+
+/* --- Estados vacíos y de error ----------------------------------------------------------- */
+.estado-vacio {
+  text-align: center; background: #fff; border: 1px dashed var(--cd-borde); border-radius: var(--cd-radio);
+  padding: 2rem 1rem; margin-bottom: 1rem;
+}
+.estado-vacio-icono { font-size: 2.5rem; display: block; margin-bottom: .5rem; }
+
+/* --- Tarjetas de oferta ------------------------------------------------------------------ */
 .marca-mostaza { --marca-color: #f2b705; --marca-texto: #1b1b1b; }
 .marca-mcdonalds { --marca-color: #da291c; --marca-texto: #fff; }
 .marca-burger-king { --marca-color: #502314; --marca-texto: #f5ebdc; }
 
 .oferta {
-  border: 0;
-  border-top: 4px solid var(--marca-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+  border: 0; border-radius: var(--cd-radio); overflow: hidden;
+  box-shadow: var(--cd-sombra);
   transition: transform .12s ease, box-shadow .12s ease;
 }
+.oferta:not(.oferta-detalle):hover { transform: translateY(-2px); box-shadow: var(--cd-sombra-alta); }
+.oferta:focus-within { box-shadow: 0 0 0 3px #2563eb; }
+.oferta.coincide { box-shadow: 0 0 0 2px var(--cd-primario), var(--cd-sombra); }
 
-.oferta:not(.oferta-detalle):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
+.oferta-foto { position: relative; aspect-ratio: 16 / 10; background: var(--cd-primario-suave); margin: 0; }
+.oferta-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.oferta-foto img.es-ilustracion { object-fit: contain; padding: 8%; }
+.oferta-foto::after { content: ""; position: absolute; inset: auto 0 0 0; height: 4px; background: var(--marca-color); }
+
+.descuento-sello {
+  position: absolute; top: .6rem; left: .6rem;
+  background: var(--cd-primario); color: #fff; font-weight: 800; font-size: 1rem;
+  padding: .2rem .55rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+}
+.vence-pronto {
+  position: absolute; bottom: .75rem; left: .6rem;
+  background: #b91c1c; color: #fff; font-size: .75rem; font-weight: 700;
+  padding: .15rem .5rem; border-radius: 999px;
+}
+.foto-aviso {
+  position: absolute; bottom: .75rem; right: .6rem;
+  background: rgba(0, 0, 0, .55); color: #fff; font-size: .7rem; padding: .1rem .45rem; border-radius: 6px;
+}
+
+/* En el celular el feed es una lista compacta (foto a la izquierda) para ver varias ofertas a la vez. */
+@media (max-width: 575.98px) {
+  .oferta:not(.oferta-detalle) { flex-direction: row; }
+  .oferta:not(.oferta-detalle) .oferta-foto { flex: 0 0 36%; aspect-ratio: auto; min-height: 132px; }
+  .oferta:not(.oferta-detalle) .oferta-foto::after { inset: 0 0 0 auto; width: 4px; height: auto; }
+  .oferta:not(.oferta-detalle) .card-body { padding: .7rem .8rem; min-width: 0; }
+  .oferta:not(.oferta-detalle) .descuento-sello { top: .4rem; left: .4rem; font-size: .85rem; padding: .1rem .4rem; }
+  .oferta:not(.oferta-detalle) .vence-pronto { bottom: .4rem; left: .4rem; right: .6rem; text-align: center; font-size: .7rem; }
+  .oferta:not(.oferta-detalle) .precio { font-size: 1.15rem; }
+  .oferta:not(.oferta-detalle) .categoria-tarjeta { display: none; }
 }
 
 .marca-chip {
-  display: inline-block;
-  padding: .15rem .55rem;
-  border-radius: 999px;
-  background: var(--marca-color);
-  color: var(--marca-texto);
-  font-size: .75rem;
-  font-weight: 600;
+  display: inline-block; padding: .15rem .6rem; border-radius: 999px;
+  background: var(--marca-color); color: var(--marca-texto); font-size: .75rem; font-weight: 700;
 }
-
-.descuento {
-  font-weight: 700;
-  color: #198754;
-}
-
-.precio {
-  font-size: 1.35rem;
-  font-weight: 700;
-}
+.card-title { font-size: 1.05rem; font-weight: 700; }
+.precio { font-size: 1.35rem; font-weight: 800; color: var(--cd-tinta); }
+.meta span { white-space: nowrap; }
 
 .etiqueta-preferencia {
-  font-size: .8rem;
-  color: #0a58ca;
-  background: #e7f1ff;
-  border-radius: .375rem;
-  padding: .2rem .5rem;
+  font-size: .8rem; color: var(--cd-primario-oscuro); background: var(--cd-primario-suave);
+  border-radius: 8px; padding: .25rem .55rem; font-weight: 600;
 }
 
-.ficha dt { font-weight: 400; color: #6c757d; }
+/* --- Ficha de la oferta ------------------------------------------------------------------ */
+.volver { display: inline-flex; align-items: center; min-height: 44px; font-weight: 500; }
+.oferta-detalle { max-width: 600px; margin: 0 auto; }
+@media (max-width: 575.98px) { .oferta-foto-grande { aspect-ratio: auto; height: 30vh; min-height: 170px; } }
+.oferta-detalle.vencida .oferta-foto img { filter: grayscale(1); opacity: .7; }
+.ficha dt { font-weight: 400; color: var(--cd-suave); }
 .ficha dd { margin-bottom: .35rem; }
 
 .codigo-cupon {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 1.25rem;
-  letter-spacing: .08em;
-  text-align: center;
-  border: 2px dashed var(--marca-color);
-  border-radius: .5rem;
-  padding: .5rem;
-  background: #fff;
+  font-size: 1.35rem; letter-spacing: .1em; text-align: center;
+  border: 2px dashed var(--marca-color); border-radius: 10px; padding: .6rem;
+  background: #fff; user-select: all;
 }
+.pasos { padding-left: 1.2rem; margin-bottom: .75rem; }
+.pasos li { margin-bottom: .2rem; }
+.ya-voto { color: #15803d; font-weight: 600; }
+.feedback { border: 2px solid var(--cd-primario); border-radius: var(--cd-radio); }
 
+/* --- Semáforo ---------------------------------------------------------------------------- */
+.semaforo-verde { --semaforo: #15803d; --semaforo-fondo: #ecfdf3; }
+.semaforo-amarillo { --semaforo: #b45309; --semaforo-fondo: #fffbeb; }
+.semaforo-rojo { --semaforo: #b91c1c; --semaforo-fondo: #fef2f2; }
+.semaforo-sin-datos { --semaforo: #6b7280; --semaforo-fondo: #f3f4f6; }
+.semaforo-bloque { background: var(--semaforo-fondo); border-left: 4px solid var(--semaforo); border-radius: 10px; padding: .6rem .8rem; }
+.semaforo-bloque h2 { color: var(--semaforo); }
 .semaforo-punto {
-  display: inline-block;
-  width: .55rem;
-  height: .55rem;
-  border-radius: 50%;
-  background: currentColor;
-  margin-right: .15rem;
+  display: inline-block; width: .75rem; height: .75rem; border-radius: 50%;
+  background: var(--semaforo, currentColor); flex: 0 0 auto;
 }
+.semaforo-leyenda li { margin-bottom: .4rem; }
 
-.oferta-detalle {
-  max-width: 560px;
-  margin: 0 auto;
+/* --- Preferencias ------------------------------------------------------------------------ */
+.chip-preferencia { min-height: 44px; }
+.btn-check:disabled + .chip-preferencia { opacity: .45; }
+
+/* --- Ayuda ------------------------------------------------------------------------------- */
+.pasos-ayuda { list-style: none; padding: 0; display: grid; gap: .6rem; }
+.pasos-ayuda li {
+  display: flex; gap: .75rem; align-items: flex-start;
+  background: #fff; border: 1px solid var(--cd-borde); border-radius: var(--cd-radio); padding: .75rem 1rem;
+}
+.paso-icono { font-size: 1.5rem; line-height: 1; }
+.preguntas details { background: #fff; border: 1px solid var(--cd-borde); border-radius: 10px; padding: .6rem .9rem; margin-bottom: .5rem; }
+.preguntas summary { font-weight: 600; cursor: pointer; min-height: 32px; display: list-item; }
+.preguntas details p { margin: .5rem 0 0; color: var(--cd-suave); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
 }
