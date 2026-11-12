@@ -67,6 +67,15 @@ internal static class ValidadorOferta
             errores.Add("El enlace del comercio debe ser una URL http(s) válida.");
         }
 
+        if (!string.IsNullOrWhiteSpace(oferta.ImagenUrl) && !ImagenValida(oferta.ImagenUrl.Trim()))
+        {
+            errores.Add("La imagen debe ser una URL http(s) válida o una ruta local que empiece con /img/.");
+        }
+
         return errores;
     }
+
+    private static bool ImagenValida(string imagen) =>
+        imagen.StartsWith("/img/", StringComparison.Ordinal) && !imagen.Contains("..", StringComparison.Ordinal) ||
+        Uri.TryCreate(imagen, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp);
 }

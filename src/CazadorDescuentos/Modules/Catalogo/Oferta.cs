@@ -14,6 +14,9 @@ internal sealed class Oferta
     public string? Restricciones { get; set; }
     public string EnlaceComercio { get; set; } = string.Empty;
 
+    /// <summary>Foto del producto (URL http(s) o ruta local). Null si la fuente no trae foto.</summary>
+    public string? ImagenUrl { get; set; }
+
     public decimal PrecioOriginal { get; set; }
     public decimal PrecioPromocional { get; set; }
     public decimal PorcentajeDescuento { get; set; }

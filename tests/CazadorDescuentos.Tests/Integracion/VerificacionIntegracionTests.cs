@@ -15,10 +15,13 @@ public sealed class VerificacionIntegracionTests : IDisposable
 
     public void Dispose() => _base.Dispose();
 
+    private static readonly IOptions<OpcionesSemaforo> Opciones =
+        Options.Create(new OpcionesSemaforo { MinimoVotos = 3, PorcentajeVerde = 70, PorcentajeRojo = 40 });
+
     private IVerificacion Verificacion(AppDbContext db) => new VerificacionService(
         new RegistrarVotoService(db, _base.Reloj),
-        new CalcularSemaforoService(db, Options.Create(
-            new OpcionesSemaforo { MinimoVotos = 3, PorcentajeVerde = 70, PorcentajeRojo = 40 })));
+        new CalcularSemaforoService(db, Opciones),
+        Opciones);
 
     [Fact]
     public async Task Segundo_voto_del_mismo_dispositivo_para_la_misma_oferta_devuelve_false()
@@ -62,6 +65,8 @@ public sealed class VerificacionIntegracionTests : IDisposable
         await verificacion.RegistrarVotoAsync(1, "c", true);
         Assert.Equal(Semaforo.Verde, await verificacion.ObtenerSemaforoAsync(1));
         Assert.Equal(Semaforo.SinDatos, await verificacion.ObtenerSemaforoAsync(2));
+        Assert.Equal(new ResumenVotos(Semaforo.Verde, 3, 0), await verificacion.ObtenerResumenAsync(1));
+        Assert.Equal(new ReglasSemaforo(3, 70, 40), verificacion.Reglas);
     }
 
     [Fact]

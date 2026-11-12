@@ -54,6 +54,35 @@ public class ValidadorOfertaTests
     [Fact]
     public void Enlace_invalido_es_invalida() => Assert.NotEmpty(Validar(Valida() with { EnlaceComercio = "burgerking" }));
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("https://www.burgerking.com.ar/img/whopper.png")]
+    [InlineData("/img/ofertas/combo-papas.jpg")]
+    public void Imagen_opcional_valida(string? imagen) => Assert.Empty(Validar(Valida() with { ImagenUrl = imagen }));
+
+    [Theory]
+    [InlineData("whopper.png")]
+    [InlineData("javascript:alert(1)")]
+    [InlineData("/img/../appsettings.json")]
+    public void Imagen_invalida_es_invalida(string imagen) => Assert.NotEmpty(Validar(Valida() with { ImagenUrl = imagen }));
+
+    [Fact]
+    public void Interpreta_la_imagen_del_llm_y_resuelve_rutas_relativas()
+    {
+        const string json = """
+            {"ofertas":[
+              {"producto":"A","imagen":"/media/a.png"},
+              {"producto":"B","imagen":"https://cdn.mostaza.com/b.jpg"},
+              {"producto":"C","imagen":"javascript:alert(1)"},
+              {"producto":"D","imagen":null}
+            ]}
+            """;
+
+        var imagenes = ClienteLlm.Interpretar(json, "Mostaza", "https://www.mostazaweb.com.ar/promos/").Select(o => o.ImagenUrl);
+
+        Assert.Equal(["https://www.mostazaweb.com.ar/media/a.png", "https://cdn.mostaza.com/b.jpg", null, null], imagenes);
+    }
+
     [Fact]
     public void Junta_todos_los_errores()
     {

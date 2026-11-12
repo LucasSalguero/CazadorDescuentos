@@ -13,5 +13,6 @@ internal static class Mapeo
         o.PrecioOriginal,
         o.PrecioPromocional,
         o.PorcentajeDescuento,
-        DateTime.SpecifyKind(o.VencimientoUtc, DateTimeKind.Utc));
+        DateTime.SpecifyKind(o.VencimientoUtc, DateTimeKind.Utc),
+        o.ImagenUrl);
 }

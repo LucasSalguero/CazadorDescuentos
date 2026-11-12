@@ -15,12 +15,15 @@ internal sealed class CalcularSemaforoService
         _opciones = opciones;
     }
 
-    public async Task<Semaforo> EjecutarAsync(int ofertaId, CancellationToken ct)
+    public async Task<Semaforo> EjecutarAsync(int ofertaId, CancellationToken ct) =>
+        (await ResumirAsync(ofertaId, ct)).Semaforo;
+
+    public async Task<ResumenVotos> ResumirAsync(int ofertaId, CancellationToken ct)
     {
         var votos = _db.Votos.Where(v => v.OfertaId == ofertaId);
         var positivos = await votos.CountAsync(v => v.Funciono, ct);
         var negativos = await votos.CountAsync(v => !v.Funciono, ct);
-        return Calcular(positivos, negativos, _opciones.Value);
+        return new ResumenVotos(Calcular(positivos, negativos, _opciones.Value), positivos, negativos);
     }
 
     /// <summary>

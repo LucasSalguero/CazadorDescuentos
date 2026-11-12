@@ -56,6 +56,19 @@ public sealed class CatalogoIntegracionTests : IDisposable
     }
 
     [Fact]
+    public async Task Guarda_la_imagen_y_la_conserva_si_una_actualizacion_llega_sin_foto()
+    {
+        using var db = _base.CrearContexto();
+        var catalogo = Catalogo(db);
+        var id = await catalogo.GuardarOfertaAsync(Oferta() with { ImagenUrl = "/img/ofertas/combo-papas.jpg" });
+        await catalogo.GuardarOfertaAsync(Oferta() with { ImagenUrl = null, PrecioPromocional = 9000m });
+
+        var oferta = await catalogo.ObtenerPorIdAsync(id);
+        Assert.Equal("/img/ofertas/combo-papas.jpg", oferta!.ImagenUrl);
+        Assert.Equal(9000m, oferta.PrecioPromocional);
+    }
+
+    [Fact]
     public async Task Oferta_vencida_no_se_lista_pero_sigue_en_la_base_y_se_puede_obtener_por_id()
     {
         using var db = _base.CrearContexto();
